@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         background:#f4f6f8; color:#1a1a1a; margin:0; padding:0; }
+  .wrap { max-width:680px; margin:0 auto; padding:24px 16px; }
+  .card { background:#ffffff; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:#667085; font-size:13px; margin:0 0 20px; }
+  h2 { font-size:17px; margin:28px 0 12px; padding-bottom:6px; border-bottom:2px solid #eaecf0; }
+  details { border:1px solid #eaecf0; border-radius:8px; margin-bottom:8px; overflow:hidden; }
+  details[open] { background:#fafbfc; }
+  summary { cursor:pointer; padding:12px 14px; font-weight:600; font-size:14px;
+            list-style:none; display:flex; align-items:center; gap:8px; }
+  summary::-webkit-details-marker { display:none; }
+  summary::before { content:"▸"; color:#0b5cad; font-size:12px; }
+  details[open] summary::before { content:"▾"; }
+  .badge { font-size:11px; color:#fff; background:#0b5cad; border-radius:10px;
+           padding:1px 8px; font-weight:600; }
+  .body { padding:0 14px 14px 30px; font-size:14px; line-height:1.55; color:#344054; }
+  .meta { font-size:12px; color:#98a2b3; margin-top:8px; }
+  .meta a { color:#0b5cad; }
+  .foot { text-align:center; color:#98a2b3; font-size:12px; margin-top:20px; }
+  .webview { text-align:center; margin-bottom:16px; }
+  .webview a { color:#0b5cad; font-size:13px; }
+  .empty { color:#98a2b3; font-style:italic; font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    {% if webview_url %}
+    <div class="webview"><a href="{{ webview_url }}">🌐 Ver esta edición en el navegador (mejor experiencia)</a></div>
+    {% endif %}
+
+    <h1>{{ subject }}</h1>
+    <p class="sub">Período: {{ period_start }} → {{ period_end }} · {{ total_news }} noticias · {{ total_videos }} videos</p>
+
+    <!-- ===================== PARTE 1: NOTICIAS ===================== -->
+    <h2>📌 1. Noticias más relevantes</h2>
+    {% if news %}
+      {% for n in news %}
+      <details>
+        <summary><span class="badge">{{ "%.0f"|format(n.score) }}</span>{{ n.one_line }}</summary>
+        <div class="body">
+          {{ n.summary_html | safe }}
+          <div class="meta">
+            {{ n.source }} · {{ n.date }} · <a href="{{ n.url }}">Ver nota completa ↗</a>
+          </div>
+        </div>
+      </details>
+      {% endfor %}
+    {% else %}
+      <p class="empty">No hubo noticias relevantes en los últimos {{ window_days }} días.</p>
+    {% endif %}
+
+    <!-- ===================== PARTE 2: YOUTUBE ===================== -->
+    <h2>🎥 2. Resumen de videos de YouTube</h2>
+    {% if videos %}
+      {% for v in videos %}
+      <details>
+        <summary>{{ v.title }}</summary>
+        <div class="body">
+          {{ v.summary_html | safe }}
+          <div class="meta">
+            {{ v.channel }} · {{ v.date }} · <a href="{{ v.url }}">Ver video ↗</a>
+          </div>
+        </div>
+      </details>
+      {% endfor %}
+    {% else %}
+      <p class="empty">No se subieron videos nuevos en los últimos {{ window_days }} días.</p>
+    {% endif %}
+
+    <div class="foot">
+      Generado automáticamente por tu News Bot · {{ generated_at }}<br>
+      Los enlaces de leyes/proyectos llevan a un resumen generado por IA.
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+# ============================================================
+#  FUENTES DE NOTICIAS
+#  Editá este archivo para agregar/quitar fuentes.
+# ============================================================
+
+# ---- Fuentes con RSS (lo más fácil y confiable) ----
+rss:
+  - name: "Boletín Oficial - Legislación y Avisos"
+    url: "https://www.boletinoficial.gob.ar/rss/verNormas"
+    category: "legislacion"
+
+  - name: "Infobae - Política"
+    url: "https://www.infobae.com/feeds/rss/politica/"
+    category: "politica"
+
+  # Agregá más así:
+  # - name: "Nombre de la fuente"
+  #   url: "https://ejemplo.com/rss.xml"
+  #   category: "economia"
+
+# ---- Fuentes SIN RSS (requieren web scraping) ----
+# Necesitás inspeccionar el HTML de la página y definir los selectores CSS.
+# Tip: abrí la página, clic derecho > Inspeccionar sobre un titular.
+scrape:
+  - name: "Ejemplo Portal Sin RSS"
+    url: "https://www.ejemplo.com/noticias"
+    # Selector CSS que envuelve CADA noticia de la lista:
+    item_selector: "article.nota"
+    # Dentro de cada item, dónde está el título:
+    title_selector: "h2 a"
+    # Dónde está el link (si es el mismo <a> del título, repetí el selector):
+    link_selector: "h2 a"
+    # (Opcional) selector de la fecha; si no hay, se usa la fecha de scraping:
+    date_selector: "time"
+    # (Opcional) atributo del que sacar la fecha (ej: datetime). Vacío = texto:
+    date_attr: "datetime"
+    category: "general"
+    enabled: false   # poné true cuando lo configures de verdad
+
+# ---- Canales de YouTube ----
+# Necesitás el channel_id (empieza con "UC...").
+# Cómo obtenerlo: entrá al canal > Ver código fuente > buscá "channelId"
+# o usá https://commentpicker.com/youtube-channel-id.php
+youtube:
+  - name: "Canal de Ejemplo"
+    channel_id: "UCXXXXXXXXXXXXXXXXXXXXXX"
+    enabled: false   # poné true cuando cargues un channel_id real
+    languages: ["es", "es-419", "en"]  # idiomas de transcripción a intentar

@@ -1,0 +1,91 @@
+# ============================================================
+#  CONFIGURACIÓN GENERAL DEL BOT
+# ============================================================
+
+# Ventana de tiempo: cuántos días hacia atrás mirar
+window_days: 7
+
+# ---- Criterios de RELEVANCIA ----
+# Cada noticia recibe un puntaje. Solo se muestran las que superen min_score.
+relevance:
+  min_score: 3          # umbral mínimo para considerar "relevante"
+  max_items: 12         # máximo de noticias en la parte 1 del email
+
+  # Palabras clave que SUMAN puntaje si aparecen en título/resumen.
+  # Peso alto (temas que te importan mucho):
+  keywords_high:
+    weight: 3
+    words:
+      - "ley"
+      - "proyecto de ley"
+      - "decreto"
+      - "DNU"
+      - "reforma"
+      - "regulación"
+      - "impuesto"
+      - "licitación"
+
+  # Peso medio:
+  keywords_medium:
+    weight: 2
+    words:
+      - "gobierno"
+      - "congreso"
+      - "senado"
+      - "diputados"
+      - "resolución"
+      - "normativa"
+
+  # Peso bajo (contexto general):
+  keywords_low:
+    weight: 1
+    words:
+      - "anuncio"
+      - "medida"
+      - "acuerdo"
+
+  # Palabras que RESTAN (para filtrar ruido). Puntaje negativo:
+  keywords_negative:
+    weight: -5
+    words:
+      - "horóscopo"
+      - "farándula"
+      - "espectáculos"
+
+  # Si está activada la IA, además del score por keywords se le pide al modelo
+  # que puntúe la relevancia de 0 a 5 y se suma.
+  use_llm_scoring: true
+
+# ---- Resúmenes con IA ----
+ai:
+  enabled: true                    # requiere OPENAI_API_KEY como secret
+  model: "gpt-4o-mini"             # modelo económico y rápido
+  # Si no hay API key, cae a un resumen extractivo (primeras oraciones).
+  news_summary_sentences: 3        # largo del fallback sin IA
+  video_summary_sentences: 5
+
+# ---- Detección de leyes / proyectos para hipervínculos ----
+laws:
+  enabled: true
+  # Patrones regex para detectar menciones de normas en los textos.
+  patterns:
+    # Ley con número: "Ley 27.401", "Ley N° 27401"
+    - '(?i)\bley\s+(?:n[°º.]?\s*)?\d[\d.]{2,}'
+    # DNU y decretos con número: "DNU 70/2023", "Decreto 70/2023"
+    - '(?i)\bDNU\s+(?:n[°º.]?\s*)?\d[\d./-]*\d'
+    - '(?i)\bdecreto\s+(?:n[°º.]?\s*)?\d[\d./-]*\d'
+    # Expedientes
+    - '(?i)\bexpediente\s+[\dA-Z][\dA-Z./-]{2,}'
+    # Proyecto de ley "de/sobre X": captura acotada (2-4 palabras) sin arrastrar frases
+    - '(?i)\bproyecto de ley\s+(?:de|sobre)\s+(?:\w+\s?){1,4}'
+
+# ---- Publicación en GitHub Pages ----
+# La URL base donde quedan publicadas las páginas de resúmenes de leyes.
+# Formato: https://TU_USUARIO.github.io/TU_REPO
+# Se puede sobreescribir con la variable de entorno PAGES_BASE_URL.
+pages_base_url: "https://TU_USUARIO.github.io/news-bot"
+
+# ---- Email ----
+email:
+  subject_prefix: "📰 Novedades de la semana"
+  timezone: "America/Argentina/Buenos_Aires"
